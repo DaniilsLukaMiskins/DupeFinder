@@ -48,56 +48,83 @@ class DupeFile
             using var stream = File.OpenRead(file.FullName);
             string hash = Convert.ToHexString(SHA256.HashData(stream));
             hashes[i] = hash;
-            Console.WriteLine($"{file.Name}: {hash}");
-            writer.WriteLine($"{file.Name}, {hash}");
+            Console.WriteLine($"{file.FullName}: {hash}");
+            writer.WriteLine($"{file.FullName}, {hash}");
             i++;
 
         }
-        string[,] group = new string[length, 1];
-        //int number = 0;
+        Dictionary<string, int> groups = new Dictionary<string, int>();
         int j = 0;
+
         foreach(string hash in hashes) //making hash groups
         {
-            bool same = false;
-
-            for (int l=0; l<j; l++)
+            if (groups.ContainsKey(hash))
             {
-                if (group[l, 0] == hash)
-                {
-                    same = true;
-                    break;
-                }
-
+                groups[hash]++;
             }
-
-            if (same == false)
+            else
             {
-                group[j, 0] = hash;
-                j++;
+                groups[hash] = 1;
             }
 
 
         }
         
         writer.WriteLine($"Grouped by identical hash");
+        List<string> writtenhashes = new List<string>();
+        int groupnumber = 1;
+        if (groups.Count == 0)
+        {
+            writer.WriteLine("No files were in the folders");
+   
+        }
+        else
+        {
+            writer.WriteLine("================");
+            writer.WriteLine("These files might be deleted (THIS IS A SUGGESTION AND NOT A RULE): ");
+            writer.WriteLine("");
 
+        }
         for (int l = 0;  l<length; l++) //grouping by hash and writing into CSV file
         {
-            if (group[l, 0] == null) break;
-            writer.WriteLine($"Group {l+1}");
-            
-                for (int k = 0; k<length; k++)
+            if (groups.Count == 0)
+            {
+                break;
+            }
+
+
+            if (groups.ContainsKey(hashes[l]) && groups[hashes[l]] < 2)
+            {
+               
+                continue;
+            }
+
+            if (!writtenhashes.Contains(hashes[l]))
+            {
+                writer.WriteLine($"Group {groupnumber}:");
+            }
+            if (!writtenhashes.Contains(hashes[l]))
+            {
+                for (int k = 0; k < length; k++)
                 {
-                    if (group[l, 0] == hashes[k])
+
+
+                    if (hashes[k] == hashes[l])
                     {
-                    writer.WriteLine(Files[k].Name);
+                        writer.WriteLine($"{Files[k].FullName}");
+                        if (!writtenhashes.Contains(hashes[k]))
+                        {
+                            writtenhashes.Add(hashes[k]);
+                        }
                     }
                 }
+            }
+            else continue;
 
-            
+            groupnumber++;
 
         }
 
-        Console.WriteLine(Path.GetFullPath("all_files.csv"));
+        Console.WriteLine(Path.GetFullPath(pathfolder));
     }
 }
