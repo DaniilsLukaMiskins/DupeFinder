@@ -53,53 +53,48 @@ class DupeFile
             i++;
 
         }
-        string[,] group = new string[length, length+1];
-        int number = 0;
+        string[,] group = new string[length, 1];
+        //int number = 0;
         int j = 0;
-        
-
-        foreach (string hash in hashes) // finding dublicates and grouping
+        foreach(string hash in hashes) //making hash groups
         {
-            if (group[number,0]==hash)
+            bool same = false;
+
+            for (int l=0; l<j; l++)
             {
-                group[number, j+1] = Files[j].Name;
-                
-            }
-            else if (group[number, 0]!=hash && number!=0)
-            {
-                number++;
-                group[number, j+1] = Files[j].Name;
+                if (group[l, 0] == hash)
+                {
+                    same = true;
+                    break;
+                }
 
             }
-            else if (group[number, 0] != hash)
-            {
-                group[number, j+1] = Files[j].Name;
 
+            if (same == false)
+            {
+                group[j, 0] = hash;
+                j++;
             }
-            j++;
+
 
         }
+        
+        writer.WriteLine($"Grouped by identical hash");
 
-        //int column = 0;
-        for (int k = 0; k<length; k++) //writing result
+        for (int l = 0;  l<length; l++) //grouping by hash and writing into CSV file
         {
+            if (group[l, 0] == null) break;
+            writer.WriteLine($"Group {l+1}");
             
-                writer.WriteLine($"Group {k}");
-                int filesize=0;
-                for (int column=0; column<length; column++)
+                for (int k = 0; k<length; k++)
                 {
-                    long fullgroupsize = 0;
-                    if (group[k, column] != null)
+                    if (group[l, 0] == hashes[k])
                     {
-
-                    //long sizeInBytes = new FileInfo(@$"{pathfiles}\{group[k,column]}").Length;
-                    //writer.WriteLine($"{group[k,column]}, {sizeInBytes} Bytes");
-                    //fullgroupsize += sizeInBytes;
-                    writer.WriteLine($"{group[k,column]}");
+                    writer.WriteLine(Files[k].Name);
+                    }
                 }
-                //writer.WriteLine($"Group {k} size{fullgroupsize} Bytes");
 
-            }
+            
 
         }
 
