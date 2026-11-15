@@ -29,19 +29,20 @@ class DupeFile
 
     public void Run()
     {
-        string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory); //finding folder on desktop
-        string path = Path.Combine(desktop, "test c#");
+        string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile); // finding downloads folder
+        string pathfiles = Path.Combine(userProfile, "Downloads");
 
-        DirectoryInfo place = new DirectoryInfo(path);
+        DirectoryInfo place = new DirectoryInfo(pathfiles);
         FileInfo[] Files = place.GetFiles("*", SearchOption.AllDirectories);
-        var pathfolder = @"C:\Users\lukam\source\repos\DupeFinderConsole\DupeFinder\all_files.csv";
+        var pathfolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "all_files.csv");//creating table on desktop
 
 
         Console.WriteLine("Files are:");
         Console.WriteLine();
 
         using var writer = new StreamWriter(pathfolder); //csv file with file names
-        writer.WriteLine("Name,Hash");
+        writer.WriteLine($"Files are taken from {pathfiles}");
+        writer.WriteLine($"and written into {pathfolder}");
         int length = Files.Length;
         string[] hashes = new string[length];
 
@@ -52,7 +53,7 @@ class DupeFile
             string hash = Convert.ToHexString(SHA256.HashData(stream));
             hashes[i] = hash;
             Console.WriteLine($"{file.FullName}: {hash}");
-            writer.WriteLine($"{file.FullName}, {hash}");
+            //writer.WriteLine($"{file.FullName}, {hash}");
             i++;
 
         }
@@ -76,7 +77,7 @@ class DupeFile
         writer.WriteLine($"Grouped by identical hash");
         List<string> writtenhashes = new List<string>();
         int groupnumber = 1;
-        if (groups.Count == 0)
+        if (groups.Count == 0) //checking if there are any files
         {
             writer.WriteLine("No files were in the folders");
    
