@@ -29,11 +29,14 @@ class DupeFile
 
     public void Run()
     {
-        var pathfiles = @"C:\Users\lukam\OneDrive\Desktop\test c#";
+        string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory); //finding folder on desktop
+        string path = Path.Combine(desktop, "test c#");
+
+        DirectoryInfo place = new DirectoryInfo(path);
+        FileInfo[] Files = place.GetFiles("*", SearchOption.AllDirectories);
         var pathfolder = @"C:\Users\lukam\source\repos\DupeFinderConsole\DupeFinder\all_files.csv";
 
-        DirectoryInfo place = new DirectoryInfo(pathfiles);
-        FileInfo[] Files = place.GetFiles("*", SearchOption.AllDirectories);
+
         Console.WriteLine("Files are:");
         Console.WriteLine();
 
@@ -54,7 +57,7 @@ class DupeFile
 
         }
         Dictionary<string, int> groups = new Dictionary<string, int>();
-        int j = 0;
+        
 
         foreach(string hash in hashes) //making hash groups
         {
