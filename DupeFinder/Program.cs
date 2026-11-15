@@ -1,4 +1,4 @@
-﻿// C# program to find dublicate files in downloads folder ( can be changed)
+﻿// C# program to find duplicate files in downloads folder ( can be changed)
 // works as a single console project in a solution
 //created on 12 November 2026 by Daniils Luka Mishkins
 //finalyzed on 15 November 2026
